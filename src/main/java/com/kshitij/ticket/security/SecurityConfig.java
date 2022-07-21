@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import static com.kshitij.ticket.domain.Role.ROLE_ADMIN;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.POST;
 
@@ -46,11 +47,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .antMatchers("/api/login")
         .permitAll()
         .antMatchers(GET, "/api/user/**")
-        .hasAuthority("ROLE_USER")
+        .hasAuthority(ROLE_ADMIN)
         .antMatchers(POST, "/api/user/**")
-        .hasAuthority("ROLE_ADMIN")
+        .hasAuthority(ROLE_ADMIN)
+        .antMatchers(POST, "/api/movie")
+        .hasAuthority(ROLE_ADMIN)
         .anyRequest()
-        .permitAll()
+        .authenticated()
         .and()
         .addFilter(filter)
         .addFilterBefore(

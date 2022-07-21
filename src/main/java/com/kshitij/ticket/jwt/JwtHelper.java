@@ -24,8 +24,14 @@ import java.util.stream.Collectors;
 @Configuration
 @PropertySource("classpath:security.properties")
 public class JwtHelper {
-  @Value("${jwt.secret}")
+  @Value("${jwt.secret:77AUGKQB}")
   private String secret;
+
+  @Value("${jwt.access.token.expiry.seconds:84600}")
+  private long accessTokenExpirySeconds;
+
+  @Value("${jwt.access.token.expiry.seconds:8460000}")
+  private long refreshTokenExpirySeconds;
 
   public Algorithm getAlgorithm() {
     return Algorithm.HMAC256(StringUtils.getBytes(secret, StandardCharsets.UTF_8));
@@ -44,7 +50,7 @@ public class JwtHelper {
   public String generateAccessToken(User principal, String issuer) {
     return JWT.create()
         .withSubject(principal.getUsername())
-        .withExpiresAt(new Date(System.currentTimeMillis() + 10 * 60 * 1000))
+        .withExpiresAt(new Date(System.currentTimeMillis() + accessTokenExpirySeconds * 1000))
         .withIssuer(issuer)
         .withClaim(
             "roles",
@@ -57,7 +63,7 @@ public class JwtHelper {
   public String generateRefreshToken(User principal, String issuer) {
     return JWT.create()
         .withSubject(principal.getUsername())
-        .withExpiresAt(new Date(System.currentTimeMillis() + 24 * 60 * 60 * 1000))
+        .withExpiresAt(new Date(System.currentTimeMillis() + refreshTokenExpirySeconds * 1000))
         .withIssuer(issuer)
         .withClaim(
             "roles",

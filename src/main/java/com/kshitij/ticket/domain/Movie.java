@@ -12,16 +12,15 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class Role {
+@NoArgsConstructor
+public class Movie {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   private long id;
 
-  @NotNull(message = "Role name is blank")
+  @NotNull(message = "Movie name is blank")
   private String name;
 
-  public static final String ROLE_ADMIN = "ROLE_ADMIN";
-  public static final String ROLE_USER = "ROLE_USER";
+  private String displayPic;
 }
