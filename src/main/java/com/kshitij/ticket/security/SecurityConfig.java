@@ -38,7 +38,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         new CustomAuthenticationFilter(authenticationManagerBean(), jwtHelper);
     filter.setFilterProcessesUrl("/api/login");
 
-    http.csrf()
+    http.cors()
+        .and()
+        .csrf()
         .disable()
         .sessionManagement()
         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -49,7 +51,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .antMatchers(GET, "/api/user/**")
         .hasAuthority(ROLE_ADMIN)
         .antMatchers(POST, "/api/user/**")
-        .hasAuthority(ROLE_ADMIN)
+        .permitAll()
         .antMatchers(POST, "/api/movie")
         .hasAuthority(ROLE_ADMIN)
         .anyRequest()

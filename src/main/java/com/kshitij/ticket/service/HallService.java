@@ -13,4 +13,6 @@ public interface HallService {
   List<HallMovie> getAllMovies();
 
   List<Hall> getAllHalls();
+
+    HallMovie getShowById(long showId);
 }

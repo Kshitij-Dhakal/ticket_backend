@@ -30,6 +30,9 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
   @Override
   public Authentication attemptAuthentication(
       HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
+    // TODO: 7/21/22 fix cors issue
+    response.setHeader("Access-Control-Allow-Origin", "*");
+
     String email = request.getParameter("email");
     String password = request.getParameter("password");
     log.info("Attempt login : {}", email);

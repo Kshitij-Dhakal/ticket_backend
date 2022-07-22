@@ -58,4 +58,13 @@ public class HallServiceImpl implements HallService {
     log.info("Fetching all halls.");
     return hallRepo.findAll();
   }
+
+  @Override
+  public HallMovie getShowById(long showId) {
+    Optional<HallMovie> show = hallMovieRepo.findById(showId);
+    if (show.isEmpty()) {
+      throw new NotFoundException("Show not found");
+    }
+    return show.get();
+  }
 }

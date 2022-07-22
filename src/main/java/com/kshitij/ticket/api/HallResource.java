@@ -36,4 +36,9 @@ public class HallResource {
   public ResponseEntity<List<HallMovie>> getAllMovies() {
     return ResponseEntity.ok(hallService.getAllMovies());
   }
+
+  @GetMapping("/show/{show-id}")
+  public ResponseEntity<HallMovie> getShowById(@PathVariable("show-id") long showId) {
+    return ResponseEntity.ok(hallService.getShowById(showId));
+  }
 }
