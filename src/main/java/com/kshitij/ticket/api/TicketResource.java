@@ -1,6 +1,7 @@
 package com.kshitij.ticket.api;
 
 import com.kshitij.ticket.domain.Ticket;
+import com.kshitij.ticket.dto.ReserveTicketRequest;
 import com.kshitij.ticket.service.TicketService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,9 +18,9 @@ public class TicketResource {
 
   @PostMapping("/ticket")
   public ResponseEntity<Ticket> reserveTicket(
-      Authentication authentication, @RequestBody Ticket ticket) {
+      Authentication authentication, @RequestBody ReserveTicketRequest reserveTicketRequest) {
     String email = (String) authentication.getPrincipal();
-    return ResponseEntity.ok(ticketService.reserveTicket(email, ticket));
+    return ResponseEntity.ok(ticketService.reserveTicket(email, reserveTicketRequest));
   }
 
   @GetMapping("/ticket")
