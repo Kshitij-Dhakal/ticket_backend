@@ -1,7 +1,7 @@
 package com.kshitij.ticket.api;
 
 import com.kshitij.ticket.domain.Hall;
-import com.kshitij.ticket.domain.HallMovie;
+import com.kshitij.ticket.domain.Show;
 import com.kshitij.ticket.service.HallService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -26,19 +26,20 @@ public class HallResource {
   }
 
   @PostMapping("/hall/{hall-id}/movie")
-  public ResponseEntity<HallMovie> saveHallMovie(
-      @PathVariable("hall-id") long hallId, @RequestBody HallMovie hallMovie) {
-    hallMovie.setHall(new Hall(hallId, null, 0));
-    return ResponseEntity.ok(hallService.addMovie(hallMovie));
+  public ResponseEntity<Show> saveHallMovie(
+      @PathVariable("hall-id") long hallId, @RequestBody Show show) {
+    show.setHall(new Hall(hallId, null, 0));
+    return ResponseEntity.ok(hallService.addShow(show));
   }
 
   @GetMapping("/shows")
-  public ResponseEntity<List<HallMovie>> getAllMovies() {
+  public ResponseEntity<List<Show>> getAllMovies(
+      @RequestParam(required = false, name = "next") String next) {
     return ResponseEntity.ok(hallService.getAllMovies());
   }
 
   @GetMapping("/show/{show-id}")
-  public ResponseEntity<HallMovie> getShowById(@PathVariable("show-id") long showId) {
+  public ResponseEntity<Show> getShowById(@PathVariable("show-id") long showId) {
     return ResponseEntity.ok(hallService.getShowById(showId));
   }
 }

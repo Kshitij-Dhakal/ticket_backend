@@ -23,8 +23,8 @@ public class Ticket {
   private User user;
 
   @ManyToOne
-  @JoinColumn(name = "hall_movie_id")
-  private HallMovie show;
+  @JoinColumn(name = "show_id")
+  private Show show;
 
   private Date date;
 }

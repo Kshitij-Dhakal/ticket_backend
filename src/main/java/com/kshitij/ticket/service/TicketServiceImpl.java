@@ -1,6 +1,7 @@
 package com.kshitij.ticket.service;
 
-import com.kshitij.ticket.domain.HallMovie;
+import com.kshitij.ticket.domain.ReservedSeats;
+import com.kshitij.ticket.domain.Show;
 import com.kshitij.ticket.domain.Ticket;
 import com.kshitij.ticket.domain.User;
 import com.kshitij.ticket.dto.ReserveTicketRequest;
@@ -8,6 +9,7 @@ import com.kshitij.ticket.error.FailedException;
 import com.kshitij.ticket.error.NotFoundException;
 import com.kshitij.ticket.error.ValidationException;
 import com.kshitij.ticket.repo.HallMovieRepo;
+import com.kshitij.ticket.repo.ReservedSeatsRepo;
 import com.kshitij.ticket.repo.TicketRepo;
 import com.kshitij.ticket.repo.UserRepo;
 import lombok.RequiredArgsConstructor;
@@ -17,8 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +29,7 @@ public class TicketServiceImpl implements TicketService {
   private final UserRepo userRepo;
   private final HallMovieRepo hallMovieRepo;
   private final TicketRepo ticketRepo;
+  private final ReservedSeatsRepo reservedSeatsRepo;
 
   @Override
   public Ticket reserveTicket(
@@ -37,23 +39,31 @@ public class TicketServiceImpl implements TicketService {
         email,
         reserveTicketRequest.getTicket().getShow().getId());
     User user = userRepo.findByEmail(email);
-    Optional<HallMovie> hallMovie =
+    Optional<Show> optionalShow =
         hallMovieRepo.findById(reserveTicketRequest.getTicket().getShow().getId());
-    if (hallMovie.isEmpty()) {
+    if (optionalShow.isEmpty()) {
       throw new NotFoundException("This reservation is not possible");
     }
-    long reserved = hallMovie.get().getReserved();
-    long capacity = hallMovie.get().getHall().getCapacity();
-    if (capacity - reserved < 1) {
-      throw new FailedException("All reserved");
+    Show show = optionalShow.get();
+    for (ReservedSeats i : reserveTicketRequest.getReservedSeats()) {
+      if (i.getSeat() > show.getHall().getCapacity() - 1 || i.getSeat() < 0) {
+        throw new ValidationException(
+            "Invalid seat. It must be between 0 and " + (show.getHall().getCapacity() - 1));
+      }
+      if (show.getReservedSeats().contains(i)) {
+        throw new FailedException("Ticket already reserved.");
+      }
     }
-    if (hallMovie.get().getDate().getTime() < System.currentTimeMillis()) {
+    if (show.getDate().getTime() < System.currentTimeMillis()) {
       throw new ValidationException("Date already passed");
     }
-    hallMovie.get().setReserved(hallMovie.get().getReserved() + 1);
-    reserveTicketRequest.getTicket().setShow(hallMovie.get());
+    Set<ReservedSeats> reserved = new HashSet<>(show.getReservedSeats());
+    reserved.addAll(reserveTicketRequest.getReservedSeats());
+    List<ReservedSeats> reservedSeats = reservedSeatsRepo.saveAll(reserved);
+    show.setReservedSeats(reservedSeats);
+    reserveTicketRequest.getTicket().setShow(show);
     reserveTicketRequest.getTicket().setUser(user);
-    reserveTicketRequest.getTicket().setDate(hallMovie.get().getDate());
+    reserveTicketRequest.getTicket().setDate(show.getDate());
     return ticketRepo.save(reserveTicketRequest.getTicket());
   }
 
@@ -62,5 +72,11 @@ public class TicketServiceImpl implements TicketService {
     log.info("Getting tickets for user : {}", email);
     User user = userRepo.findByEmail(email);
     return ticketRepo.findByUser(user);
+  }
+
+  @Override
+  public List<Ticket> findAllReservations() {
+    log.info("Getting all reservations");
+    return ticketRepo.findAll();
   }
 }

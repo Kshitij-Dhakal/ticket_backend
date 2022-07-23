@@ -28,4 +28,9 @@ public class TicketResource {
     String email = (String) authentication.getPrincipal();
     return ResponseEntity.ok(ticketService.getTicketByEmail(email));
   }
+
+  @GetMapping("/dashboard/tickets")
+  public ResponseEntity<List<Ticket>> getAllReservations() {
+    return ResponseEntity.ok(ticketService.findAllReservations());
+  }
 }

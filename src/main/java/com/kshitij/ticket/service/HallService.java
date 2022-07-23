@@ -1,18 +1,18 @@
 package com.kshitij.ticket.service;
 
 import com.kshitij.ticket.domain.Hall;
-import com.kshitij.ticket.domain.HallMovie;
+import com.kshitij.ticket.domain.Show;
 
 import java.util.List;
 
 public interface HallService {
   Hall saveHall(Hall hall);
 
-  HallMovie addMovie(HallMovie hallMovie);
+  Show addShow(Show show);
 
-  List<HallMovie> getAllMovies();
+  List<Show> getAllMovies();
 
   List<Hall> getAllHalls();
 
-    HallMovie getShowById(long showId);
+    Show getShowById(long showId);
 }

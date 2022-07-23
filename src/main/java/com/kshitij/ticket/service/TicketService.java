@@ -9,4 +9,6 @@ public interface TicketService {
   Ticket reserveTicket(String email, ReserveTicketRequest reserveTicketRequest);
 
   List<Ticket> getTicketByEmail(String email);
+
+  List<Ticket> findAllReservations();
 }

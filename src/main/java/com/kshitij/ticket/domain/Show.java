@@ -6,13 +6,15 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
-@Entity
+@Entity(name = "hall_movie")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class HallMovie {
+public class Show {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   private long id;
@@ -28,5 +30,8 @@ public class HallMovie {
   private Movie movie;
 
   @NotNull private Date date;
-  private long reserved;
+
+  @OneToMany
+  @JoinColumn(name = "show_id")
+  private List<ReservedSeats> reservedSeats = new ArrayList<>();
 }

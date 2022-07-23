@@ -1,7 +1,7 @@
 package com.kshitij.ticket.service;
 
 import com.kshitij.ticket.domain.Hall;
-import com.kshitij.ticket.domain.HallMovie;
+import com.kshitij.ticket.domain.Show;
 import com.kshitij.ticket.domain.Movie;
 import com.kshitij.ticket.error.NotFoundException;
 import com.kshitij.ticket.repo.HallMovieRepo;
@@ -32,23 +32,23 @@ public class HallServiceImpl implements HallService {
   }
 
   @Override
-  public HallMovie addMovie(@Valid HallMovie hallMovie) {
-    log.info("Adding movie in hall : {}", hallMovie);
-    Optional<Hall> hall = hallRepo.findById(hallMovie.getHall().getId());
+  public Show addShow(@Valid Show show) {
+    log.info("Adding movie in hall : {}", show);
+    Optional<Hall> hall = hallRepo.findById(show.getHall().getId());
     if (hall.isEmpty()) {
       throw new NotFoundException("Hall not found");
     }
-    Optional<Movie> movie = movieRepo.findById(hallMovie.getMovie().getId());
+    Optional<Movie> movie = movieRepo.findById(show.getMovie().getId());
     if (movie.isEmpty()) {
       throw new NotFoundException("Movie not found");
     }
-    hallMovie.setHall(hall.get());
-    hallMovie.setMovie(movie.get());
-    return hallMovieRepo.save(hallMovie);
+    show.setHall(hall.get());
+    show.setMovie(movie.get());
+    return hallMovieRepo.save(show);
   }
 
   @Override
-  public List<HallMovie> getAllMovies() {
+  public List<Show> getAllMovies() {
     log.info("Fetching hall movies.");
     return hallMovieRepo.findAll();
   }
@@ -60,8 +60,8 @@ public class HallServiceImpl implements HallService {
   }
 
   @Override
-  public HallMovie getShowById(long showId) {
-    Optional<HallMovie> show = hallMovieRepo.findById(showId);
+  public Show getShowById(long showId) {
+    Optional<Show> show = hallMovieRepo.findById(showId);
     if (show.isEmpty()) {
       throw new NotFoundException("Show not found");
     }
